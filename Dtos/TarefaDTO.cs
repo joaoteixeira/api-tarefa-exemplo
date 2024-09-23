@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiTarefas2.Dtos
 {
@@ -8,6 +9,7 @@ namespace ApiTarefas2.Dtos
         [MinLength(5)]
         public string Descricao { get; set; }
 
+        [DefaultValue(false)]
         public bool Feito { get; set; } = false;
     }
 }

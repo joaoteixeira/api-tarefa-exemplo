@@ -13,12 +13,6 @@ namespace ApiTarefas2.Controllers
             return Ok("API Tarefas: online");
         }
 
-        [HttpGet("hello-world")]
-        public IActionResult GetHelloWorld()
-        {
-            return Ok("Hello World do João");
-        }
-
         [HttpGet("autor")]
         public IActionResult GetAutor()
         {
