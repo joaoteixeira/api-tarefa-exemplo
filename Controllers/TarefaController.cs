@@ -44,7 +44,6 @@ namespace ApiTarefas2.Controllers
             {
                 var dao = new TarefaDAO();
                 tarefa.Id = dao.Insert(tarefa);
-
             }
             catch (Exception ex)
             {
