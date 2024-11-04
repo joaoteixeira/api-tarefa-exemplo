@@ -17,19 +17,6 @@ namespace ApiTarefas2.Controllers
             return Ok(listaTarefas);
         }
 
-        //[HttpGet("{id}")]
-        //public IActionResult GetById(int id) {
-
-        //    var tarefa = listaTarefas.Where(item => item.Id == id).FirstOrDefault();
-
-        //    if (tarefa == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok();
-        //}
-
         [HttpPost]
         public IActionResult Post([FromBody] TarefaDTO item)
         {
@@ -54,37 +41,74 @@ namespace ApiTarefas2.Controllers
             return Created("", tarefa);
         }
 
-        //[HttpPut("{id}")]
-        //public IActionResult Put(int id, [FromBody] TarefaDTO item)
-        //{
-        //    var tarefa = listaTarefas.Where(item => item.Id == id).FirstOrDefault();
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
 
-        //    if (tarefa == null)
-        //    {
-        //        return NotFound();
-        //    }
+            try
+            {
+                var tarefa = new TarefaDAO().GetById(id);
 
-        //    tarefa.Descricao = item.Descricao;
-        //    tarefa.Feito = item.Feito;
+                if (tarefa == null)
+                {
+                    return NotFound();
+                }
 
-        //    return Ok(listaTarefas);
-        //}
+                return Ok(tarefa);
+            }
+            catch (Exception)
+            {
+                return Problem("Ocorreram erros ao processar a solicitação");
+            }
+        }
 
-        //[HttpDelete("{id}")]
-        //public IActionResult Delete(int id)
-        //{
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] TarefaDTO item)
+        {
+            try
+            {
+                var tarefa = new TarefaDAO().GetById(id);
 
-        //    var tarefa = listaTarefas.Where(item => item.Id == id).FirstOrDefault();
+                if (tarefa == null)
+                {
+                    return NotFound();
+                }
 
-        //    if (tarefa == null)
-        //    {
-        //        return NotFound();
-        //    }
+                tarefa.Descricao = item.Descricao;
+                tarefa.Feito = item.Feito;
 
-        //    listaTarefas.Remove(tarefa);
+                new TarefaDAO().Update(tarefa);
 
-        //    return Ok(tarefa);
-        //}
+                return Ok(tarefa);
+            }
+            catch (Exception e)
+            {
+                return Problem(e.Message);
+                // return Problem("Ocorreram erros ao processar a solicitação");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                var tarefa = new TarefaDAO().GetById(id);
+
+                if (tarefa == null)
+                {
+                    return NotFound();
+                }
+
+                new TarefaDAO().Delete(tarefa.Id);
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return Problem("Ocorreram erros ao processar a solicitação");
+            }
+        }
 
     }
 }

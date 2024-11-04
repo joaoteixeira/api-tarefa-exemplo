@@ -77,19 +77,97 @@ namespace ApiTarefas2.Models
             }
         }
 
-        public Tarefa GetById(int id)
+        public Tarefa? GetById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Tarefa _tarefa = new Tarefa();
+                // Tarefa _tarefa = new();
+
+                var query = conn.Query();
+                query.CommandText = "SELECT * FROM tarefas WHERE id_tar = @_id";
+
+                query.Parameters.AddWithValue("@_id", id);
+
+                MySqlDataReader reader = query.ExecuteReader();
+
+                if (!reader.HasRows)
+                {
+                    return null;
+                }
+
+                while (reader.Read())
+                {
+                    _tarefa.Id = reader.GetInt32("id_tar");
+                    _tarefa.Descricao = reader.GetString("descricao_tar");
+                    _tarefa.Data = reader.GetDateTime("data_tar");
+                    _tarefa.Feito = reader.GetBoolean("feito_tar");
+                }
+
+                return _tarefa;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
-        public Tarefa Update(Tarefa item)
+        public void Update(Tarefa item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = conn.Query();
+                query.CommandText = "UPDATE tarefas SET descricao_tar = @_descricao, feito_tar = @_feito WHERE id_tar = @_id";
+
+                query.Parameters.AddWithValue("@_descricao", item.Descricao);
+                query.Parameters.AddWithValue("@_feito", item.Feito);
+                query.Parameters.AddWithValue("@_id", item.Id);
+
+                var result = query.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    throw new Exception("O registro não foi atualizado. Verifique e tente novamente");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
-        public Tarefa Delete(Tarefa item)
+        public void Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = conn.Query();
+                query.CommandText = "DELETE FROM tarefas WHERE id_tar = @_id";
+
+                query.Parameters.AddWithValue("@_id", id);
+
+                var result = query.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    throw new Exception("O registro não foi excluído. Verifique e tente novamente");
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
 
