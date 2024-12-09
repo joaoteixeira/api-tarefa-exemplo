@@ -3,25 +3,24 @@ using MySql.Data.MySqlClient;
 
 namespace ApiTarefas2.Models
 {
-    public class TarefaDAO
+    public class CategoriaDAO
     {
+
         private static ConnectionMysql conn;
 
-        public TarefaDAO()
+        public CategoriaDAO()
         {
             conn = new ConnectionMysql();
         }
 
-        public int Insert(Tarefa item)
+        public int Insert(Categoria item)
         {
             try
             {
                 var query = conn.Query();
-                query.CommandText = "INSERT INTO tarefas (descricao_tar, data_tar) VALUES (@descricao, @data)";
+                query.CommandText = "INSERT INTO categorias (nome_cat) VALUES (@nome)";
 
-                query.Parameters.AddWithValue("@descricao", item.Descricao);
-                query.Parameters.AddWithValue("@data", item.Data.ToString("yyyy-MM-dd HH:mm:ss")); //"10/11/1990" -> "1990-11-10"
-
+                query.Parameters.AddWithValue("@nome", item.Nome);
 
                 var result = query.ExecuteNonQuery();
 
@@ -30,7 +29,7 @@ namespace ApiTarefas2.Models
                     throw new Exception("O registro não foi inserido. Verifique e tente novamente");
                 }
 
-                return (int) query.LastInsertedId;
+                return (int)query.LastInsertedId;
             }
             catch (Exception)
             {
@@ -42,25 +41,23 @@ namespace ApiTarefas2.Models
             }
         }
 
-        public List<Tarefa> List()
+        public List<Categoria> List()
         {
             try
             {
-                List<Tarefa> list = new List<Tarefa>();
+                List<Categoria> list = new List<Categoria>();
 
                 var query = conn.Query();
-                query.CommandText = "SELECT * FROM tarefas";
+                query.CommandText = "SELECT * FROM categorias";
 
                 MySqlDataReader reader = query.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    list.Add(new Tarefa()
+                    list.Add(new Categoria()
                     {
-                        Id = reader.GetInt32("id_tar"),
-                        Descricao = reader.GetString("descricao_tar"),
-                        Data = reader.GetDateTime("data_tar"),
-                        Feito = reader.GetBoolean("feito_tar")
+                        Id = reader.GetInt32("id_cat"),
+                        Nome = reader.GetString("nome_cat")
                     });
                 }
 
@@ -76,15 +73,14 @@ namespace ApiTarefas2.Models
             }
         }
 
-        public Tarefa? GetById(int id)
+        public Categoria? GetById(int id)
         {
             try
             {
-                Tarefa _tarefa = new Tarefa();
-                // Tarefa _tarefa = new();
+                Categoria _categoria = new Categoria();
 
                 var query = conn.Query();
-                query.CommandText = "SELECT * FROM tarefas WHERE id_tar = @_id";
+                query.CommandText = "SELECT * FROM categorias WHERE id_cat = @_id";
 
                 query.Parameters.AddWithValue("@_id", id);
 
@@ -97,13 +93,11 @@ namespace ApiTarefas2.Models
 
                 while (reader.Read())
                 {
-                    _tarefa.Id = reader.GetInt32("id_tar");
-                    _tarefa.Descricao = reader.GetString("descricao_tar");
-                    _tarefa.Data = reader.GetDateTime("data_tar");
-                    _tarefa.Feito = reader.GetBoolean("feito_tar");
+                    _categoria.Id = reader.GetInt32("id_cat");
+                    _categoria.Nome = reader.GetString("nome_cat");
                 }
 
-                return _tarefa;
+                return _categoria;
             }
             catch (Exception)
             {
@@ -115,15 +109,14 @@ namespace ApiTarefas2.Models
             }
         }
 
-        public void Update(Tarefa item)
+        public void Update(Categoria item)
         {
             try
             {
                 var query = conn.Query();
-                query.CommandText = "UPDATE tarefas SET descricao_tar = @_descricao, feito_tar = @_feito WHERE id_tar = @_id";
+                query.CommandText = "UPDATE categorias SET nome_cat = @_nome WHERE id_cat = @_id";
 
-                query.Parameters.AddWithValue("@_descricao", item.Descricao);
-                query.Parameters.AddWithValue("@_feito", item.Feito);
+                query.Parameters.AddWithValue("@_nome", item.Nome);
                 query.Parameters.AddWithValue("@_id", item.Id);
 
                 var result = query.ExecuteNonQuery();
@@ -148,7 +141,7 @@ namespace ApiTarefas2.Models
             try
             {
                 var query = conn.Query();
-                query.CommandText = "DELETE FROM tarefas WHERE id_tar = @_id";
+                query.CommandText = "DELETE FROM categorias WHERE id_cat = @_id";
 
                 query.Parameters.AddWithValue("@_id", id);
 
@@ -168,6 +161,5 @@ namespace ApiTarefas2.Models
                 conn.Close();
             }
         }
-
     }
 }
