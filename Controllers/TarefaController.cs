@@ -20,25 +20,32 @@ namespace ApiTarefas2.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] TarefaDTO item)
         {
-
-            var tarefa = new Tarefa();
-
-            tarefa.Descricao = item.Descricao;
-            tarefa.Feito = item.Feito;
-            tarefa.Data = DateTime.Now;
-
             try
             {
+                var categoria = new CategoriaDAO().GetById(item.Categoria);
+
+                if(categoria == null)
+                {
+                    return NotFound($"Categoria {item.Categoria} não encontrada!");
+                }
+
+                var tarefa = new Tarefa();
+
+                tarefa.Descricao = item.Descricao;
+                tarefa.Feito = item.Feito;
+                tarefa.Data = DateTime.Now;
+
+                tarefa.Categoria = categoria;
+
                 var dao = new TarefaDAO();
                 tarefa.Id = dao.Insert(tarefa);
+
+                return Created("", tarefa);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }
-
-
-            return Created("", tarefa);
+            }            
         }
 
         [HttpGet("{id}")]

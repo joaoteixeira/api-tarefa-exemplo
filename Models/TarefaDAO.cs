@@ -17,11 +17,11 @@ namespace ApiTarefas2.Models
             try
             {
                 var query = conn.Query();
-                query.CommandText = "INSERT INTO tarefas (descricao_tar, data_tar) VALUES (@descricao, @data)";
+                query.CommandText = "INSERT INTO tarefas (descricao_tar, data_tar, id_cat_fk) VALUES (@descricao, @data, @id_cat)";
 
                 query.Parameters.AddWithValue("@descricao", item.Descricao);
                 query.Parameters.AddWithValue("@data", item.Data.ToString("yyyy-MM-dd HH:mm:ss")); //"10/11/1990" -> "1990-11-10"
-
+                query.Parameters.AddWithValue("@id_cat", item.Categoria.Id); 
 
                 var result = query.ExecuteNonQuery();
 
@@ -49,19 +49,34 @@ namespace ApiTarefas2.Models
                 List<Tarefa> list = new List<Tarefa>();
 
                 var query = conn.Query();
-                query.CommandText = "SELECT * FROM tarefas";
-
+                query.CommandText = "SELECT * FROM tarefas LEFT JOIN categorias ON id_cat = id_cat_fk";
                 MySqlDataReader reader = query.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    list.Add(new Tarefa()
+                    var tarefa = new Tarefa()
                     {
                         Id = reader.GetInt32("id_tar"),
                         Descricao = reader.GetString("descricao_tar"),
                         Data = reader.GetDateTime("data_tar"),
                         Feito = reader.GetBoolean("feito_tar")
-                    });
+                    };
+
+                    if(reader.IsDBNull(4))
+                    {
+
+                    } else
+                    {
+                        var categoria = new Categoria()
+                        {
+                            Id = reader.GetInt32("id_cat"),
+                            Nome = reader.GetString("nome_cat")
+                        };
+
+                        tarefa.Categoria = categoria;
+                    }
+
+                    list.Add(tarefa);
                 }
 
                 return list;

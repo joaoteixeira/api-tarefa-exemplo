@@ -11,5 +11,8 @@ namespace ApiTarefas2.Dtos
 
         [DefaultValue(false)]
         public bool Feito { get; set; } = false;
+
+        [Required]
+        public int Categoria { get; set; }
     }
 }
